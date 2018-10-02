@@ -42,12 +42,43 @@ vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA # Disable this option if project cannot be built with Ninja
     OPTIONS ${crt} ${linkage}
-    # OPTIONS_RELEASE -DOPTIMIZE=1
-    # OPTIONS_DEBUG -DDEBUGGABLE=1
 )
 
 vcpkg_build_cmake()
 
+# Headers
+file(GLOB HEADER_FILES "${SOURCE_PATH}/include/*.h")
+file(INSTALL ${HEADER_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/include)
+
+# BIN
+if (VCPKG_TARGET_ARCHITECTURE STREQUAL "x64")
+    set(ARCH_DIR "x64")
+endif()
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/bin/${ARCH_DIR}/CrashRpt1403.dll"
+    DESTINATION ${CURRENT_PACKAGES_DIR}/bin
+)
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/bin/${ARCH_DIR}/CrashRpt1403d.dll"
+    DESTINATION ${CURRENT_PACKAGES_DIR}/debug/bin
+)
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/bin/${ARCH_DIR}/CrashSender1403.exe"
+    DESTINATION ${CURRENT_PACKAGES_DIR}/tools/crashrpt
+)
+vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/crashrpt)
+
+# LIB
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-rel/lib/${ARCH_DIR}/CrashRpt1403.lib"
+    DESTINATION ${CURRENT_PACKAGES_DIR}/lib
+)
+file(INSTALL "${CURRENT_BUILDTREES_DIR}/${TARGET_TRIPLET}-dbg/lib/${ARCH_DIR}/CrashRpt1403d.lib"
+    DESTINATION ${CURRENT_PACKAGES_DIR}/debug/lib
+)
+
+# Language files
+file(GLOB LANG_FILES "${SOURCE_PATH}/lang_files/*.ini")
+file(INSTALL ${LANG_FILES} DESTINATION ${CURRENT_PACKAGES_DIR}/tools/crashrpt)
+
+vcpkg_copy_pdbs()
+    
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/License.txt DESTINATION ${CURRENT_PACKAGES_DIR}/share/crashrpt RENAME copyright)
 
