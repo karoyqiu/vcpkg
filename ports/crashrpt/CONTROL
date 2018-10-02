@@ -1,0 +1,3 @@
+Source: crashrpt
+Version: 1.4.3
+Description: CrashRpt is a free open-source library designed for intercepting exceptions in your C++ program, collecting technical information about the crash and sending error reports over the Internet to software vendor.
