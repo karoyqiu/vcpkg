@@ -17,7 +17,7 @@ vcpkg_from_github(
     REPO "BYVoid/OpenCC"
     REF "ver.1.0.5"
     SHA512 3fbefbafe5c3c2491032158577ab97b5a3edf6ea98a03a7250deba082b72c3112ad4a3396d1a469936ec32e1d141f0a2236001c2891ac9c793add2b082596cc1
-    PATCHES fix-noexcept-error.patch fix-export.patch
+    PATCHES fix-noexcept-error.patch fix-export.patch fix-lib-install.patch
 )
 
 vcpkg_find_acquire_program(PYTHON2)
@@ -38,7 +38,30 @@ elseif (VCPKG_LIBRARY_LINKAGE STREQUAL static)
     )
 endif()
 
+# It appears that at this point the build hasn't actually finished. There is probably
+# a process spawned by the build, therefore we need to wait a bit.
+
+function(try_remove_recurse_wait PATH_TO_REMOVE)
+    file(REMOVE_RECURSE ${PATH_TO_REMOVE})
+    if (EXISTS "${PATH_TO_REMOVE}")
+        execute_process(COMMAND ${CMAKE_COMMAND} -E sleep 5)
+        file(REMOVE_RECURSE ${PATH_TO_REMOVE})
+    endif()
+endfunction()
+
 vcpkg_install_cmake()
+file(INSTALL ${CURRENT_PACKAGES_DIR}/bin/opencc.exe ${CURRENT_PACKAGES_DIR}/bin/opencc_dict.exe ${CURRENT_PACKAGES_DIR}/bin/opencc_phrase_extract.exe
+    DESTINATION ${CURRENT_PACKAGES_DIR}/tools/opencc)
+vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/opencc)
+
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/bin/opencc.exe)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/bin/opencc_dict.exe)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/bin/opencc_phrase_extract.exe)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/bin/opencc.exe)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/bin/opencc_dict.exe)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/bin/opencc_phrase_extract.exe)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/include)
+try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/share)
 
 # Handle copyright
 file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/opencc RENAME copyright)

@@ -1,0 +1,10 @@
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -84,6 +84,7 @@
+ 
+ install(
+   TARGETS libopencc
++  RUNTIME DESTINATION bin
+   LIBRARY DESTINATION ${DIR_LIBRARY}
+   ARCHIVE DESTINATION ${DIR_LIBRARY}
+ )
