@@ -10,11 +10,11 @@ vcpkg_from_github(
 
 file(COPY ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt DESTINATION ${SOURCE_PATH})
 
-vcpkg_find_acquire_program(PYTHON3)
+vcpkg_find_acquire_program(PYTHON2)
 
 vcpkg_configure_cmake(
   SOURCE_PATH ${SOURCE_PATH}
-  OPTIONS -DPYTHON_EXECUTABLE=${PYTHON3}
+  OPTIONS -DPYTHON_EXECUTABLE=${PYTHON2}
   OPTIONS_DEBUG -DDISABLE_INSTALL_HEADERS=ON
 )
 
