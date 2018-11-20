@@ -25,7 +25,7 @@ index 0000000..d00e158
 +set_target_properties(qntp PROPERTIES
 +    AUTOMOC ON
 +    DEFINE_SYMBOL "QNTP_BUILDING"
-+    PUBLIC_HEADER "src/qntp/QNtp.h;src/qntp/NtpClient.h;src/qntp/NtpReply.h"
++    PUBLIC_HEADER "src/qntp/QNtp.h;src/qntp/NtpClient.h;src/qntp/NtpReply.h;src/qntp/config.h"
 +)
 +target_link_libraries(qntp PUBLIC Qt5::Network)
 +
