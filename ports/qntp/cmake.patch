@@ -1,0 +1,68 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..d00e158
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,35 @@
++cmake_minimum_required(VERSION 3.12)
++
++project(QNtp)
++option(BUILD_SHARED_LIBS "Create shared libraries if on.")
++
++find_package(Qt5Network 5.10 REQUIRED)
++
++add_library(qntp
++    "src/qntp/NtpClient.h"
++    "src/qntp/config.h"
++    "src/qntp/NtpPacket.h"
++    "src/qntp/QNtp.h"
++    "src/qntp/NtpReply.h"
++    "src/qntp/NtpReply_p.h"
++    "src/qntp/NtpTimestamp.h"
++    "src/qntp/NtpClient.cpp"
++    "src/qntp/NtpReply.cpp"
++)
++set_target_properties(qntp PROPERTIES
++    AUTOMOC ON
++    DEFINE_SYMBOL "QNTP_BUILDING"
++    PUBLIC_HEADER "src/qntp/QNtp.h;src/qntp/NtpClient.h;src/qntp/NtpReply.h"
++)
++target_link_libraries(qntp PUBLIC Qt5::Network)
++
++if(NOT BUILD_SHARED_LIBS)
++    target_compile_definitions(qntp PUBLIC "QNTP_STATIC")
++endif()
++
++install(TARGETS qntp
++    RUNTIME DESTINATION "bin"
++    LIBRARY DESTINATION "lib"
++    ARCHIVE DESTINATION "lib"
++    PUBLIC_HEADER DESTINATION "include"
++)
+diff --git a/src/qntp/config.h b/src/qntp/config.h
+index f44bb53..9395bff 100644
+--- a/src/qntp/config.h
++++ b/src/qntp/config.h
+@@ -19,16 +19,14 @@
+ 
+ #include <QtGlobal>
+ 
+-#ifndef QNTP_EXPORT
+-#  if defined(QT_DLL)
+-#    if defined(QNTP_BUILDING)
+-#      define QNTP_EXPORT Q_DECL_EXPORT
+-#    else
+-#      define QNTP_EXPORT Q_DECL_IMPORT
+-#    endif
++#if !defined(QNTP_STATIC)
++#  if defined(QNTP_BUILDING)
++#    define QNTP_EXPORT Q_DECL_EXPORT
+ #  else
+-#    define QNTP_EXPORT
++#    define QNTP_EXPORT Q_DECL_IMPORT
+ #  endif
++#else
++#  define QNTP_EXPORT
+ #endif
+ 
+ #endif // QNTP_CONFIG_H

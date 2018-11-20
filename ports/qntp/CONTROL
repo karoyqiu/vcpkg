@@ -1,0 +1,3 @@
+Source: qntp
+Version:
+Description: NTP client implemented in C++ using Qt
