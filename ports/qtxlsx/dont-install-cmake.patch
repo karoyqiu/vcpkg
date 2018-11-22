@@ -1,0 +1,33 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a5e9ff6..a96634d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2)
+ 
+ project(QtXlsxWriter)
+ add_definitions(-DQT_BUILD_XLSX_LIB)
+-set(BUILD_SHARED_LIBS TRUE)
++#set(BUILD_SHARED_LIBS TRUE)
+ set(CMAKE_AUTOMOC ON)
+ 
+ if (NOT CMAKE_BUILD_TYPE)
+@@ -40,7 +40,7 @@ endif()
+ #
+ ##
+ 
+-set (PRODUCT_VERSION 0.4)
++set (PRODUCT_VERSION 0.5)
+ set (PRODUCT_SOVERSION 0)
+ 
+ execute_process(COMMAND git describe --long --match "v[0-9]*"
+@@ -101,8 +101,8 @@ INSTALL(TARGETS QtXlsxWriter
+   ARCHIVE DESTINATION lib${LIB_SUFFIX}
+ )
+ 
+-INSTALL(FILES  ${CMAKE_CURRENT_BINARY_DIR}/QtXlsxWriterConfig.cmake DESTINATION
+-    lib${LIB_SUFFIX}/cmake/${PROJECT_NAME})
++#INSTALL(FILES  ${CMAKE_CURRENT_BINARY_DIR}/QtXlsxWriterConfig.cmake DESTINATION
++#    lib${LIB_SUFFIX}/cmake/${PROJECT_NAME})
+ 
+ SET(INCLUDE_FILES
+   src/xlsx/xlsx_CT_HeaderFooter.hpp
