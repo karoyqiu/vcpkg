@@ -17,7 +17,7 @@ vcpkg_from_github(
     REPO "rbulygin/QtXlsxWriter"
     REF "v0.5"
     SHA512 "ae31ff5bbb9afbcb5d5c29e4eb1745b1f6c975fa51f3c6e5d20a725c28921dd384fad25c864b2db339ce7e108beb8f3ced210e03f7e0f4713d33f361593f540c"
-    PATCHES "dont-install-cmake.patch"
+    PATCHES "dont-install-cmake.patch" "fix-memory-leaks.patch"
 )
 
 vcpkg_configure_cmake(

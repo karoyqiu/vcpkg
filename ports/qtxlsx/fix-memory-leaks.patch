@@ -1,0 +1,13 @@
+diff --git a/src/xlsx/xlsxdocument.cpp b/src/xlsx/xlsxdocument.cpp
+index a5e9ff6..a96634d 100644
+--- a/src/xlsx/xlsxdocument.cpp
++++ b/src/xlsx/xlsxdocument.cpp
+@@ -1074,6 +1074,8 @@
+  */
+ Document::~Document()
+ {
++    delete d_ptr->workbook;
++    delete d_ptr->contentTypes;
+     delete d_ptr;
+ }
+ 
