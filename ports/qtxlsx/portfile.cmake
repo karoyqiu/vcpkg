@@ -14,11 +14,12 @@ include(vcpkg_common_functions)
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO "rbulygin/QtXlsxWriter"
+    REPO "dbzhang800/QtXlsxWriter"
     REF "ad90b6a2c21b300138ceb9fe9030a5917230f92d"
-    SHA512 "ae31ff5bbb9afbcb5d5c29e4eb1745b1f6c975fa51f3c6e5d20a725c28921dd384fad25c864b2db339ce7e108beb8f3ced210e03f7e0f4713d33f361593f540c"
-    PATCHES "dont-install-cmake.patch"
+    SHA512 "54b29e72dfba9e0f28e8d4406db50e035a1c11126765a4c538a0da335e4b3e1942f20643ab4b07dfe5e3334c4473923e36288855af61748c19f86ba2b3b8588f"
+    PATCHES "auto.patch"
 )
+file(COPY "${CURRENT_PORT_DIR}/CMakeLists.txt" DESTINATION "${SOURCE_PATH}")
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
