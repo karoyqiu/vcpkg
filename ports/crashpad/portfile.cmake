@@ -14,6 +14,8 @@ vcpkg_configure_cmake(
 )
 
 vcpkg_install_cmake()
+file(INSTALL ${CURRENT_PACKAGES_DIR}/bin/crashpad_handler.exe DESTINATION ${CURRENT_PACKAGES_DIR}/tools/crashpad)
+vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/crashpad)
 
 file(REMOVE_RECURSE
     ${CURRENT_PACKAGES_DIR}/bin
