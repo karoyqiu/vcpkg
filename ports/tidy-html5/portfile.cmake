@@ -1,27 +1,24 @@
 include(vcpkg_common_functions)
 
+vcpkg_check_linkage(ONLY_STATIC_LIBRARY)
+
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO htacg/tidy-html5
     REF 5.6.0
     SHA512 179088a6dbd29bb0e4f0219222f755b186145495f7414f6d0e178803ab67140391283d35352d946f9790c6b1b5b462ee6e24f1cc84f19391cb9b65e73979ffd1
-    HEAD_REF master)
-
-vcpkg_apply_patches(
-    SOURCE_PATH ${SOURCE_PATH}
+    HEAD_REF master
     PATCHES
-    ${CMAKE_CURRENT_LIST_DIR}/remove_execution_character_set.patch
+        remove_execution_character_set.patch
 )
-
-string(COMPARE EQUAL "${VCPKG_LIBRARY_LINKAGE}" "dynamic" BUILD_SHARED_LIB)
 
 vcpkg_configure_cmake(
     SOURCE_PATH ${SOURCE_PATH}
     PREFER_NINJA
+    NO_CHARSET_FLAG
     OPTIONS
-        -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
-        -DBUILD_SHARED_LIB=${BUILD_SHARED_LIB}
-        -DTIDY_CONSOLE_SHARED=${BUILD_SHARED_LIB}
+        -DBUILD_SHARED_LIB=OFF
+        -DTIDY_CONSOLE_SHARED=OFF
 )
 
 vcpkg_install_cmake()
