@@ -254,6 +254,7 @@ namespace vcpkg
             L"VULKAN_SDK",
             // Enable targeted Android NDK
             L"ANDROID_NDK_HOME",
+            L"CMAKE_PREFIX_PATH",
         };
 
         const Optional<std::string> keep_vars = System::get_environment_variable("VCPKG_KEEP_ENV_VARS");
