@@ -1,70 +1,50 @@
-# Common Ambient Variables:
-#   CURRENT_BUILDTREES_DIR    = ${VCPKG_ROOT_DIR}\buildtrees\${PORT}
-#   CURRENT_PACKAGES_DIR      = ${VCPKG_ROOT_DIR}\packages\${PORT}_${TARGET_TRIPLET}
-#   CURRENT_PORT_DIR          = ${VCPKG_ROOT_DIR}\ports\${PORT}
-#   PORT                      = current port name (zlib, etc)
-#   TARGET_TRIPLET            = current triplet (x86-windows, x64-windows-static, etc)
-#   VCPKG_CRT_LINKAGE         = C runtime linkage type (static, dynamic)
-#   VCPKG_LIBRARY_LINKAGE     = target library linkage type (static, dynamic)
-#   VCPKG_ROOT_DIR            = <C:\path\to\current\vcpkg>
-#   VCPKG_TARGET_ARCHITECTURE = target architecture (x64, x86, arm)
-#
-
-include(vcpkg_common_functions)
+vcpkg_fail_port_install(ON_ARCH "arm" "arm64" ON_TARGET "UWP")
 
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO "BYVoid/OpenCC"
-    REF "ver.1.0.5"
-    SHA512 3fbefbafe5c3c2491032158577ab97b5a3edf6ea98a03a7250deba082b72c3112ad4a3396d1a469936ec32e1d141f0a2236001c2891ac9c793add2b082596cc1
-    PATCHES fix-noexcept-error.patch fix-export.patch fix-lib-install.patch
+    REPO BYVoid/OpenCC
+    REF e8ec6d59f264a4a42e310148a9534a8cc0123928
+    SHA512 e6b3f6d681223b299795c324a48e82609abd1f411d3cbd5f9d8607284ec04717fa9878953d037c25a931a0857f50a5c0e883e0d44ddbea18c50830ad49514c59
+    HEAD_REF master
 )
 
-vcpkg_find_acquire_program(PYTHON2)
-get_filename_component(PYTHON2_EXE_PATH ${PYTHON2} DIRECTORY)
-set(ENV{PATH} "$ENV{PATH};${PYTHON2_EXE_PATH}")
+vcpkg_find_acquire_program(PYTHON3)
+get_filename_component(PYTHON3_DIR ${PYTHON3} DIRECTORY)
+vcpkg_add_to_path(${PYTHON3_DIR})
 
-if (VCPKG_LIBRARY_LINKAGE STREQUAL dynamic)
-    vcpkg_configure_cmake(
-        SOURCE_PATH ${SOURCE_PATH}
-        DISABLE_PARALLEL
-        OPTIONS -DBUILD_SHARED_LIBS:BOOL=ON
-    )
-elseif (VCPKG_LIBRARY_LINKAGE STREQUAL static)
-    vcpkg_configure_cmake(
-        SOURCE_PATH ${SOURCE_PATH}
-        DISABLE_PARALLEL
-        OPTIONS -DBUILD_SHARED_LIBS:BOOL=OFF
-    )
-endif()
-
-# It appears that at this point the build hasn't actually finished. There is probably
-# a process spawned by the build, therefore we need to wait a bit.
-
-function(try_remove_recurse_wait PATH_TO_REMOVE)
-    file(REMOVE_RECURSE ${PATH_TO_REMOVE})
-    if (EXISTS "${PATH_TO_REMOVE}")
-        execute_process(COMMAND ${CMAKE_COMMAND} -E sleep 5)
-        file(REMOVE_RECURSE ${PATH_TO_REMOVE})
-    endif()
-endfunction()
+vcpkg_configure_cmake(
+    SOURCE_PATH ${SOURCE_PATH}
+    OPTIONS
+        -DBUILD_DOCUMENTATION=OFF
+        -DENABLE_GTEST=OFF
+)
 
 vcpkg_install_cmake()
-file(INSTALL ${CURRENT_PACKAGES_DIR}/bin/opencc.exe ${CURRENT_PACKAGES_DIR}/bin/opencc_dict.exe ${CURRENT_PACKAGES_DIR}/bin/opencc_phrase_extract.exe
-    DESTINATION ${CURRENT_PACKAGES_DIR}/tools/opencc)
-vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/opencc)
 
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/bin/opencc.exe)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/bin/opencc_dict.exe)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/bin/opencc_phrase_extract.exe)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/bin/opencc.exe)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/bin/opencc_dict.exe)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/bin/opencc_phrase_extract.exe)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/include)
-try_remove_recurse_wait(${CURRENT_PACKAGES_DIR}/debug/share)
+vcpkg_copy_pdbs()
 
-# Handle copyright
-file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/opencc RENAME copyright)
+if(tools IN_LIST FEATURES)
+    foreach(opencc_tool opencc opencc_dict opencc_phrase_extract)
+        file(COPY
+            ${CURRENT_PACKAGES_DIR}/bin/${opencc_tool}${VCPKG_TARGET_EXECUTABLE_SUFFIX}
+            DESTINATION ${CURRENT_PACKAGES_DIR}/tools/${PORT}
+        )
+    endforeach()
 
-# Post-build test for cmake libraries
-# vcpkg_test_cmake(PACKAGE_NAME opencc)
+    vcpkg_copy_tool_dependencies(${CURRENT_PACKAGES_DIR}/tools/${PORT})
+endif()
+
+if(VCPKG_LIBRARY_LINKAGE STREQUAL static)
+    file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/bin ${CURRENT_PACKAGES_DIR}/debug/bin)
+else()
+    foreach(opencc_tool opencc opencc_dict opencc_phrase_extract)
+        file(REMOVE
+            ${CURRENT_PACKAGES_DIR}/bin/${opencc_tool}${VCPKG_TARGET_EXECUTABLE_SUFFIX}
+            ${CURRENT_PACKAGES_DIR}/debug/bin/${opencc_tool}${VCPKG_TARGET_EXECUTABLE_SUFFIX}
+        )
+    endforeach()
+endif()
+
+file(REMOVE_RECURSE ${CURRENT_PACKAGES_DIR}/debug/include ${CURRENT_PACKAGES_DIR}/debug/share)
+
+file(INSTALL ${SOURCE_PATH}/LICENSE DESTINATION ${CURRENT_PACKAGES_DIR}/share/${PORT} RENAME copyright)

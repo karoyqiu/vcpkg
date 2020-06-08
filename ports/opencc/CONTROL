@@ -1,3 +1,8 @@
 Source: opencc
-Version: ver.1.0.5
-Description: Open Chinese Convert (OpenCC, 開放中文轉換) is an opensource project for conversion between Traditional Chinese and Simplified Chinese, supporting character-level conversion, phrase-level conversion, variant conversion and regional idioms among Mainland China, Taiwan and Hong kong.
+Version: 2020-04-26-4
+Description: A project for conversion between Traditional and Simplified Chinese
+Homepage: https://github.com/BYVoid/OpenCC
+Supports: !(arm|arm64|uwp)
+
+Feature: tools
+Description: Build OpenCC command-line tools
