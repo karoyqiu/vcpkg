@@ -1,0 +1,4 @@
+Source: sentry-native
+Version: 0.2.4
+Description: Official Sentry SDK for C/C++
+Build-Depends: zlib
